@@ -9,13 +9,12 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-/**
- * Servlet implementation class Calculator
- */
-@WebServlet(name = "calculator", urlPatterns = { "/calculator" })
-public class Calculator extends HttpServlet {
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+@WebServlet("/calcpage")
+public class CalcPage extends HttpServlet {
+
+	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html; charset=UTF-8");
 		Cookie[] cookies = request.getCookies();
 		
@@ -51,7 +50,7 @@ public class Calculator extends HttpServlet {
 		out.write ("</style>");
 		out.write ("</head>");
 		out.write ("<body>");
-		out.write("	<form  method=\"post\">");
+		out.write("	<form action=\"calc3\" method=\"post\">");
 		out.write("		<table>");
 		out.write("			<tr>");
 		out.printf("				<td class=\"output\" colspan=\"4\">%s</td></tr>", exp);
@@ -89,45 +88,4 @@ public class Calculator extends HttpServlet {
 		out.write("</body>");
 		out.write("</html>");
 	}
-
-
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Cookie[] cookies = request.getCookies();
-
-		String value = request.getParameter("value");
-		String operator = request.getParameter("operator");
-		String dot = request.getParameter("dot");
-		
-		String exp = "";
-		
-		if (cookies != null)
-			for(Cookie c:cookies) {
-				if(c.getName().equals("exp")) {
-					exp = c.getValue();
-					break;
-				}
-			}
-		if(operator!=null && operator.equals("=")){
-//			ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
-//			try {
-//				exp = String.valueOf(engine.eval(exp));				
-//			}catch (ScriptException e) {
-//				e.printStackTrace();
-//			}
-			// 위의 모듈에 비정상
-			exp = "1000";
-			System.out.println("exp="+exp);
-		}
-		else {
-			exp += value==null?"":value;
-			exp += operator==null?"":operator;
-			exp += dot==null?"":operator;
-		}
-		Cookie expCookie = new Cookie("exp", exp);
-		
-		expCookie.setPath("/calculator");
-		response.addCookie(expCookie);
-		response.sendRedirect("calculator");
-	}
-
 }
